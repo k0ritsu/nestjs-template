@@ -9,6 +9,7 @@ import { ConfigService } from './config/config.service';
 import { AuthModule } from './modules/auth/auth.module';
 import { HealthcheckModule } from './modules/healthcheck/healthcheck.module';
 import { HttpExceptionFilter } from './modules/shared/http/filters/http-exception.filter';
+import { OtelShutdownProvider } from './modules/shared/otel/otel-shutdown.provider';
 import { UserModule } from './modules/user/user.module';
 
 @Module({
@@ -31,7 +32,7 @@ import { UserModule } from './modules/user/user.module';
     PrometheusModule.register(),
     OpenTelemetryModule.forRoot({
       metrics: {
-        hostMetrics: true,
+        hostMetrics: false,
       },
     }),
     AuthModule,
@@ -39,6 +40,7 @@ import { UserModule } from './modules/user/user.module';
     UserModule,
   ],
   providers: [
+    OtelShutdownProvider,
     {
       provide: APP_PIPE,
       useClass: ZodValidationPipe,
