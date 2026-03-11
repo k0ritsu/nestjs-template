@@ -26,4 +26,4 @@ COPY --from=builder --chown=nestjs:nodejs /app/package.json /app/package.json
 
 USER nestjs
 
-CMD ["node", "/app/dist/main.js"]
+CMD ["node", "--import", "/app/dist/otel-setup.js", "/app/dist/main.js"]

@@ -53,7 +53,7 @@ receivers:
         - job_name: 'nestjs-template'
           scrape_interval: 2s
           static_configs:
-            - targets: ['nestjs-template:8081']
+            - targets: ['nestjs-template:4000']
               labels:
                 service: 'nestjs-template'
 
