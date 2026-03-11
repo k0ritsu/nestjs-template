@@ -1,0 +1,79 @@
+services:
+  grafana:
+    image: grafana/grafana:12.3
+    environment:
+      OTEL_RESOURCE_ATTRIBUTES: 'service.name=grafana'
+    ports:
+      - 3000:3000
+    volumes:
+      - ./config/grafana/dashboards:/var/lib/grafana/dashboards
+      - ./config/grafana/provisioning/dashboards:/etc/grafana/provisioning/dashboards
+      - ./config/grafana/provisioning/datasources:/etc/grafana/provisioning/datasources
+      - ./config/grafana/grafana.ini:/etc/grafana/grafana.ini
+    depends_on:
+      - loki
+      - mimir
+      - otel-collector
+      - pyroscope
+      - tempo
+
+  loki:
+    image: grafana/loki:3.5.11
+    command:
+      ['--pattern-ingester.enabled=true', '-config.file=/etc/loki/loki.yaml']
+    ports:
+      - 3100:3100
+    volumes:
+      - ./config/loki/loki.yaml:/etc/loki/loki.yaml
+
+  mimir:
+    image: grafana/mimir:3.0.4
+    command:
+      [
+        '-ingester.native-histograms-ingestion-enabled=true',
+        '-config.file=/etc/mimir.yaml',
+      ]
+    ports:
+      - 9009:9009
+    volumes:
+      - ./config/mimir/mimir.yaml:/etc/mimir.yaml
+
+  otel-collector:
+    image: otel/opentelemetry-collector-contrib:0.147.0
+    command: ['--config=/etc/otel-collector.yaml']
+    ports:
+      - 13133:13133
+      - 1888:1888
+      - 4317:4317
+      - 4318:4318
+      - 55679:55679
+      - 8888:8888
+      - 8889:8889
+    volumes:
+      - ./config/otel-collector/otel-collector.yaml:/etc/otel-collector.yaml
+    depends_on:
+      - mimir
+      - tempo
+
+  promtail:
+    image: grafana/promtail:3.5
+    volumes:
+      - ./config/promtail/config.yaml:/etc/promtail/config.yaml:ro
+      - /var/run/docker.sock:/var/run/docker.sock
+    command: -config.file=/etc/promtail/config.yaml
+    depends_on:
+      - loki
+
+  pyroscope:
+    image: grafana/pyroscope:1.17.4
+    ports:
+      - 4040:4040
+    command: ['server']
+
+  tempo:
+    image: grafana/tempo:2.10.1
+    command: ['-config.file=/etc/tempo.yaml']
+    ports:
+      - 3200:3200
+    volumes:
+      - ./config/tempo/tempo.yaml:/etc/tempo.yaml

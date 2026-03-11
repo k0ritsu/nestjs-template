@@ -1,24 +1,42 @@
-import { OTLPTraceExporter } from '@opentelemetry/exporter-trace-otlp-http';
-import { registerInstrumentations } from '@opentelemetry/instrumentation';
-import { HttpInstrumentation } from '@opentelemetry/instrumentation-http';
-import { NestInstrumentation } from '@opentelemetry/instrumentation-nestjs-core';
+import { getNodeAutoInstrumentations } from '@opentelemetry/auto-instrumentations-node';
+import { AsyncLocalStorageContextManager } from '@opentelemetry/context-async-hooks';
 import {
-  BatchSpanProcessor,
-  NodeTracerProvider,
-} from '@opentelemetry/sdk-trace-node';
+  CompositePropagator,
+  W3CBaggagePropagator,
+  W3CTraceContextPropagator,
+} from '@opentelemetry/core';
+import { JaegerExporter } from '@opentelemetry/exporter-jaeger';
+import { PrometheusExporter } from '@opentelemetry/exporter-prometheus';
+import { B3Propagator } from '@opentelemetry/propagator-b3';
+import { JaegerPropagator } from '@opentelemetry/propagator-jaeger';
+import { NodeSDK } from '@opentelemetry/sdk-node';
+import { BatchSpanProcessor } from '@opentelemetry/sdk-trace-base';
 
-const provider = new NodeTracerProvider({
-  spanProcessors: [
-    new BatchSpanProcessor(
-      new OTLPTraceExporter({
-        url: process.env['OTLP_TRACE_EXPORTER_URL'],
-      }),
-    ),
-  ],
+const nodeSDK = new NodeSDK({
+  metricReader: new PrometheusExporter({
+    port: 8081,
+  }),
+  spanProcessor: new BatchSpanProcessor(new JaegerExporter()),
+  contextManager: new AsyncLocalStorageContextManager(),
+  textMapPropagator: new CompositePropagator({
+    propagators: [
+      new JaegerPropagator(),
+      new W3CTraceContextPropagator(),
+      new W3CBaggagePropagator(),
+      new B3Propagator(),
+    ],
+  }),
+  instrumentations: [getNodeAutoInstrumentations()],
 });
 
-provider.register();
+nodeSDK.start();
 
-registerInstrumentations({
-  instrumentations: [new HttpInstrumentation(), new NestInstrumentation()],
+process.on('SIGTERM', () => {
+  nodeSDK
+    .shutdown()
+    .then(
+      () => {},
+      () => {},
+    )
+    .finally(() => process.exit(0));
 });

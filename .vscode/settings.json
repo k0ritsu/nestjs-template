@@ -1,11 +1,31 @@
 {
   "cSpell.words": [
+    "alertmanager",
     "healthcheck",
+    "ingester",
+    "ingesters",
+    "inmemory",
+    "kvstore",
     "livez",
+    "memberlist",
+    "multitenancy",
+    "percentunit",
+    "phlare",
+    "prometheusremotewrite",
+    "promtail",
+    "pyroscope",
     "readyz",
+    "reqps",
+    "rgba",
+    "servicegraph",
+    "spanmetrics",
     "startupz",
+    "synchronised",
+    "timepicker",
     "tsup",
+    "underdoing",
     "unplugin",
-    "willsoto"
+    "willsoto",
+    "zpages"
   ]
 }
