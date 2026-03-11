@@ -19,12 +19,11 @@ import { UserModule } from './modules/user/user.module';
       useFactory: (config: ConfigService) => ({
         pinoHttp: {
           level: config.get('LOG_LEVEL'),
-          transport:
-            config.get('NODE_ENV') === 'development'
-              ? {
-                  target: 'pino-pretty',
-                }
-              : undefined,
+          transport: config.isProduction()
+            ? undefined
+            : {
+                target: 'pino-pretty',
+              },
         },
       }),
       imports: [ConfigModule],
