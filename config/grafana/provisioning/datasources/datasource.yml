@@ -31,7 +31,7 @@ datasources:
         datasourceUid: mimir
       tracesToLogs:
         datasourceUid: loki
-        filterByTraceID: false
+        filterByTraceID: true
         spanEndTimeShift: '500ms'
         spanStartTimeShift: '-500ms'
 

@@ -9,6 +9,7 @@ import { OTLPTraceExporter } from '@opentelemetry/exporter-trace-otlp-http';
 import { HttpInstrumentation } from '@opentelemetry/instrumentation-http';
 import { NestInstrumentation } from '@opentelemetry/instrumentation-nestjs-core';
 import { PinoInstrumentation } from '@opentelemetry/instrumentation-pino';
+import { RuntimeNodeInstrumentation } from '@opentelemetry/instrumentation-runtime-node';
 import { resourceFromAttributes } from '@opentelemetry/resources';
 import { PeriodicExportingMetricReader } from '@opentelemetry/sdk-metrics';
 import { NodeSDK } from '@opentelemetry/sdk-node';
@@ -56,6 +57,7 @@ export const nodeSDK = new NodeSDK({
     new HttpInstrumentation(),
     new NestInstrumentation(),
     new PinoInstrumentation(),
+    new RuntimeNodeInstrumentation(),
     new PrismaInstrumentation(),
   ],
 });

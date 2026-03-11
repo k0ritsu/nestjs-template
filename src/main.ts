@@ -37,7 +37,7 @@ app.useLogger(logger);
 app.enableShutdownHooks(['SIGINT', 'SIGTERM']);
 
 app.setGlobalPrefix('api', {
-  exclude: ['startupz', 'livez', 'readyz', 'metrics'],
+  exclude: ['startupz', 'livez', 'readyz'],
 });
 
 app.enableVersioning({

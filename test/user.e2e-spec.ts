@@ -27,7 +27,7 @@ describe('UserController (e2e)', () => {
     );
 
     app.setGlobalPrefix('api', {
-      exclude: ['startupz', 'livez', 'readyz', 'metrics'],
+      exclude: ['startupz', 'livez', 'readyz'],
     });
 
     app.enableVersioning({
