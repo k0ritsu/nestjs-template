@@ -1,5 +1,3 @@
-import './otel-setup';
-
 import { VersioningType } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import {

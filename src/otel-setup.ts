@@ -6,6 +6,9 @@ import {
 } from '@opentelemetry/core';
 import { OTLPMetricExporter } from '@opentelemetry/exporter-metrics-otlp-http';
 import { OTLPTraceExporter } from '@opentelemetry/exporter-trace-otlp-http';
+import { HttpInstrumentation } from '@opentelemetry/instrumentation-http';
+import { NestInstrumentation } from '@opentelemetry/instrumentation-nestjs-core';
+import { PinoInstrumentation } from '@opentelemetry/instrumentation-pino';
 import { resourceFromAttributes } from '@opentelemetry/resources';
 import { PeriodicExportingMetricReader } from '@opentelemetry/sdk-metrics';
 import { NodeSDK } from '@opentelemetry/sdk-node';
@@ -14,6 +17,7 @@ import {
   ATTR_SERVICE_NAME,
   ATTR_SERVICE_VERSION,
 } from '@opentelemetry/semantic-conventions';
+import { PrismaInstrumentation } from '@prisma/instrumentation';
 
 const getUrl = (path: string) => {
   const url = process.env['OTEL_EXPORTER_OTLP_ENDPOINT'];
@@ -48,7 +52,12 @@ export const nodeSDK = new NodeSDK({
   textMapPropagator: new CompositePropagator({
     propagators: [new W3CTraceContextPropagator(), new W3CBaggagePropagator()],
   }),
-  instrumentations: [],
+  instrumentations: [
+    new HttpInstrumentation(),
+    new NestInstrumentation(),
+    new PinoInstrumentation(),
+    new PrismaInstrumentation(),
+  ],
 });
 
 nodeSDK.start();
