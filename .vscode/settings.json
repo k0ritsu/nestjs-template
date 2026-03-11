@@ -10,6 +10,7 @@
     "kvstore",
     "livez",
     "memberlist",
+    "millis",
     "multitenancy",
     "percentunit",
     "phlare",
