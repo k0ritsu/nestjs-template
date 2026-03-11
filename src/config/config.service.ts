@@ -9,4 +9,12 @@ export class ConfigService {
   get<K extends keyof Config>(key: K): Config[K] {
     return this.config[key];
   }
+
+  isDevelopment(): boolean {
+    return this.get('NODE_ENV') === 'development';
+  }
+
+  isProduction(): boolean {
+    return this.get('NODE_ENV') === 'production';
+  }
 }

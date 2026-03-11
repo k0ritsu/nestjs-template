@@ -6,39 +6,38 @@ import {
 } from '@nestjs/common';
 import { PrismaPg } from '@prisma/adapter-pg';
 import { ConfigService } from '../../../config/config.service';
-import { PrismaClient } from '../../../generated/prisma/client';
+import { Prisma, PrismaClient } from '../../../generated/prisma/client';
 
 @Injectable()
 export class PrismaService
-  extends PrismaClient
+  extends PrismaClient<
+    Prisma.PrismaClientOptions & {
+      log: Array<Prisma.LogLevel | Prisma.LogDefinition>;
+    }
+  >
   implements OnApplicationBootstrap, OnApplicationShutdown
 {
-  private readonly logger = new Logger(PrismaService.name);
-
   constructor(config: ConfigService) {
+    const logger = new Logger(PrismaService.name);
+
     super({
       adapter: new PrismaPg({
         connectionString: config.get('DATABASE_URL'),
       }),
-      log:
-        config.get('NODE_ENV') === 'development'
-          ? [
-              {
-                emit: 'event',
-                level: 'query',
-              },
-            ]
-          : undefined,
+      log: config.isDevelopment()
+        ? [
+            {
+              emit: 'event',
+              level: 'query',
+            },
+          ]
+        : [],
     });
+
+    super.$on('query', logger.debug.bind(logger));
   }
 
   onApplicationBootstrap(): Promise<void> {
-    // TODO: Fix PrismaClient generic type
-    (this as PrismaClient<'query'>).$on(
-      'query',
-      this.logger.debug.bind(this.logger),
-    );
-
     return this.$connect();
   }
 
