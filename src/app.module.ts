@@ -8,7 +8,6 @@ import { ConfigService } from './config/config.service';
 import { AuthModule } from './modules/auth/auth.module';
 import { HealthcheckModule } from './modules/healthcheck/healthcheck.module';
 import { HttpExceptionFilter } from './modules/shared/http/filters/http-exception.filter';
-import { OtelShutdownProvider } from './modules/shared/otel/otel-shutdown.provider';
 import { UserModule } from './modules/user/user.module';
 
 @Module({
