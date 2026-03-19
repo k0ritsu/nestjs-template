@@ -37,7 +37,6 @@ import { UserModule } from './modules/user/user.module';
     UserModule,
   ],
   providers: [
-    OtelShutdownProvider,
     {
       provide: APP_PIPE,
       useClass: ZodValidationPipe,
