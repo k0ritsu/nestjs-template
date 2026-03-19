@@ -29,7 +29,7 @@ const getUrl = (path: string) => {
   return url + path;
 };
 
-export const nodeSDK = new NodeSDK({
+const nodeSDK = new NodeSDK({
   resource: resourceFromAttributes({
     [ATTR_SERVICE_NAME]: process.env['APP_NAME'],
     [ATTR_SERVICE_VERSION]: process.env['APP_VERSION'],
